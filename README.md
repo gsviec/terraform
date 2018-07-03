@@ -6,7 +6,7 @@ To use it, firstly we need to install Terraform, find the [appropriate package](
 
 ### Create AWS IAM User
 
-Terraform uses AWS REST API to manage AWS resources, so we need to setup a new user account and I assume you have it
+Terraform uses AWS REST API to manage AWS resources, so we need to setup a new user account and I'm assume you have it.
 
 Copy to clipboard the Access Key ID and Secret Access Key, then set them as envrionment variables by running the commands below:
 
@@ -16,10 +16,21 @@ export AWS_SECRET_ACCESS_KEY=YOUR_SECRET_ACCESS_KEY
 
 ```
 
-Or put it into 
+Or put it into the file ~/.aws/credentials like this:
 
 ```
 [default]
 aws_access_key_id = YOUR_ACCESS_KEY_ID
 aws_secret_access_key = YOUR_SECRET_ACCESS_KEY
+```
+
+### Deploy
+
+To deploy this VPC you need to execute:
+
+```
+terraform init
+terraform plan
+terraform apply
+
 ```

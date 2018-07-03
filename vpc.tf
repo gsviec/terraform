@@ -84,6 +84,14 @@ resource "aws_route_table" "web-public-rt" {
     cidr_block = "0.0.0.0/0"
     gateway_id = "${aws_internet_gateway.gw.id}"
   }
+  route {
+    cidr_block = "192.168.9.0/24"
+    gateway_id = "${aws_vpn_gateway.vpn_gateway.id}"
+  }
+  route {
+    cidr_block = "192.168.10.0/24"
+    gateway_id = "${aws_vpn_gateway.vpn_gateway.id}"
+  }
 
   tags {
     Name = "Public-Subnet-RT"
@@ -169,7 +177,12 @@ resource "aws_security_group" "sgdb"{
     protocol = "tcp"
     cidr_blocks = "${var.vpc_public_subnets}"
   }
-
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks =  ["112.197.14.10/32"]
+  }
   vpc_id = "${aws_vpc.default.id}"
 
   tags {
