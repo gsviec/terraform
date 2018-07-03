@@ -1,0 +1,9 @@
+# Binaries for programs and plugins
+*.exe
+*.dll
+*.so
+*.dylib
+.terraform
+terraform.tfstate
+*.tfstate*
+terraform.tfvars

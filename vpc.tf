@@ -153,21 +153,21 @@ resource "aws_security_group" "sgdb"{
     from_port = 3306
     to_port = 3306
     protocol = "tcp"
-    cidr_blocks = ["${var.vpc_public_subnets}"]
+    cidr_blocks = "${var.vpc_public_subnets}"
   }
 
   ingress {
     from_port = -1
     to_port = -1
     protocol = "icmp"
-    cidr_blocks = ["${var.vpc_public_subnets}"]
+    cidr_blocks = "${var.vpc_public_subnets}"
   }
 
   ingress {
     from_port = 22
     to_port = 22
     protocol = "tcp"
-    cidr_blocks = ["${var.vpc_public_subnets}"]
+    cidr_blocks = "${var.vpc_public_subnets}"
   }
 
   vpc_id = "${aws_vpc.default.id}"
@@ -184,4 +184,38 @@ resource "aws_db_subnet_group" "default" {
     tags {
       Name = "DB Subnet Group"
     }
+}
+
+
+#Create Virtual Private Gateway
+resource "aws_vpn_gateway" "vpn_gateway" {
+  tags {
+    Name = "EU-VPN-GW"
+  }
+}
+
+resource "aws_vpn_gateway_attachment" "vpn_attachment" {
+  vpc_id         = "${aws_vpc.default.id}"
+  vpn_gateway_id = "${aws_vpn_gateway.vpn_gateway.id}"
+}
+
+
+resource "aws_customer_gateway" "customer_gateway" {
+  bgp_asn    = 65000
+  ip_address = "103.99.244.46"
+  type       = "ipsec.1"
+
+  tags {
+    Name = "VN_VNPT"
+  }
+}
+
+resource "aws_vpn_connection" "main" {
+  vpn_gateway_id      = "${aws_vpn_gateway.vpn_gateway.id}"
+  customer_gateway_id = "${aws_customer_gateway.customer_gateway.id}"
+  type                = "ipsec.1"
+  static_routes_only  = true
+  tags {
+    Name = "VNOFFICE"
+  }
 }

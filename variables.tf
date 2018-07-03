@@ -23,20 +23,32 @@ variable "aws_amis" {
   }
 }
 
-variable "vpc_cidr" {
-  description = "CIDR for the VPC"
-  default = "10.0.0.0/16"
-}
+
 
 variable "zones" {
   description = "Available zone"
   default = ["eu-central-1a", "eu-central-1b", "eu-central-1c"]
 }
+# variable "vpc_cidr" {
+#   description = "CIDR for the VPC"
+#   default = "10.0.0.0/16"
+# }
+# variable "vpc_private_subnets" {
+#   default = ["10.10.1.0/24", "10.10.2.0/24", "10.10.3.0/24"]
+# }
+# variable "vpc_public_subnets" {
+#   default = ["10.10.11.0/24", "10.10.12.0/24", "10.10.13.0/24"]
+# }
+
+variable "vpc_cidr" {
+  description = "CIDR for the VPC"
+  default = "172.31.0.0/16"
+}
 variable "vpc_private_subnets" {
-  default = ["10.10.1.0/24", "10.10.2.0/24", "10.10.3.0/24"]
+  default = ["172.31.48.0/20", "172.31.64.0/20", "172.31.80.0/20"]
 }
 variable "vpc_public_subnets" {
-  default = ["10.10.11.0/24", "10.10.12.0/24", "10.10.13.0/24"]
+  default = ["172.31.16.0/20", "172.31.0.0/20", "172.31.32.0/20"]
 }
 
 variable "key_path" {
