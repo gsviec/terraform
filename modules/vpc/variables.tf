@@ -1,12 +1,3 @@
-# variable "public_key_path" {
-#   description = <<DESCRIPTION
-# Path to the SSH public key to be used for authentication.
-# Ensure this keypair is added to your local SSH agent so provisioners can
-# connect.
-# Example: ~/.ssh/terraform.pub
-# DESCRIPTION
-# }
-
 variable "aws_region" {
   description = "Region for the VPC"
   default = "eu-central-1"
@@ -51,7 +42,40 @@ variable "vpc_public_subnets" {
   default = ["172.31.16.0/20", "172.31.0.0/20", "172.31.32.0/20"]
 }
 
+variable "office-subnets" {
+  default = ["192.168.9.0/24", "192.168.10.0/24"]
+}
+
+variable "office-static" {
+  default = ["112.197.14.10/32"]
+}
+
+variable "storm-clutser-subnets" {
+  description = "Storm cluster"
+  default = ["112.197.14.10/32"]
+}
+
+variable "customer_gateway" {
+  description = "Customer gateway"
+}
+
 variable "key_path" {
   description = "SSH Public Key path"
   default = "~/.ssh/id_rsa.pub"
 }
+
+variable "environment" {
+  description = "Environment"
+  default = "staging"
+}
+variable "domain" {
+  description = "Domain for environment"
+  default = "urbn8.com"
+}
+# variable "db_remote_state_bucket" {
+#   description = "The name of the S3 bucket for the database's remote state"
+# }
+
+# variable "db_remote_state_key" {
+#   description = "The path for the database's remote state in S3"
+# }

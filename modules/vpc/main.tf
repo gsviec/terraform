@@ -1,3 +1,8 @@
+# Define AWS as our provider
+provider "aws" {
+  region = "${var.aws_region}"
+}
+
 
 # Define our VPC
 resource "aws_vpc" "default" {
@@ -5,7 +10,11 @@ resource "aws_vpc" "default" {
   enable_dns_hostnames = true
 
   tags {
-    Name = "urbn8-vpc"
+    Name = "${var.domain}"
+    Infra             = "${var.domain}"
+    Environment       = "${var.environment}"
+    Terraformed       = "true"
+    KubernetesCluster = "${var.environment}.${var.domain}"
   }
 }
 
@@ -16,7 +25,11 @@ resource "aws_subnet" "public-subnet-a" {
   availability_zone = "${var.zones[0]}"
 
   tags {
-    Name = "Web Public Subnet-${var.zones[0]}"
+    Name = "Public Subnet-${var.zones[0]}"
+    Infra             = "${var.domain}"
+    Environment       = "${var.environment}"
+    Terraformed       = "true"
+    KubernetesCluster = "${var.environment}.${var.domain}"
   }
 }
 resource "aws_subnet" "private-subnet-a" {
@@ -25,7 +38,11 @@ resource "aws_subnet" "private-subnet-a" {
   availability_zone = "${var.zones[0]}"
 
   tags {
-    Name = "Database Private Subnet-${var.zones[0]}"
+    Name = "Private Subnet-${var.zones[0]}"
+    Infra             = "${var.domain}"
+    Environment       = "${var.environment}"
+    Terraformed       = "true"
+    KubernetesCluster = "${var.environment}.${var.domain}"
   }
 }
 # Define the public and private subnet Zone B
@@ -35,7 +52,11 @@ resource "aws_subnet" "public-subnet-b" {
   availability_zone = "${var.zones[1]}"
 
   tags {
-    Name = "Web Public Subnet-${var.zones[1]}"
+    Name = "Public Subnet-${var.zones[1]}"
+    Infra             = "${var.domain}"
+    Environment       = "${var.environment}"
+    Terraformed       = "true"
+    KubernetesCluster = "${var.environment}.${var.domain}"
   }
 }
 resource "aws_subnet" "private-subnet-b" {
@@ -44,7 +65,11 @@ resource "aws_subnet" "private-subnet-b" {
   availability_zone = "${var.zones[1]}"
 
   tags {
-    Name = "Database Private Subnet-${var.zones[1]}"
+    Name = "Private Subnet-${var.zones[1]}"
+    Infra             = "${var.domain}"
+    Environment       = "${var.environment}"
+    Terraformed       = "true"
+    KubernetesCluster = "${var.environment}.${var.domain}"
   }
 }
 # Define the public and private subnet Zone C
@@ -54,7 +79,11 @@ resource "aws_subnet" "public-subnet-c" {
   availability_zone = "${var.zones[2]}"
 
   tags {
-    Name = "Web Public Subnet-${var.zones[2]}"
+    Name = "Public Subnet-${var.zones[2]}"
+    Infra             = "${var.domain}"
+    Environment       = "${var.environment}"
+    Terraformed       = "true"
+    KubernetesCluster = "${var.environment}.${var.domain}"
   }
 }
 resource "aws_subnet" "private-subnet-c" {
@@ -63,7 +92,11 @@ resource "aws_subnet" "private-subnet-c" {
   availability_zone = "${var.zones[2]}"
 
   tags {
-    Name = "Database Private Subnet-${var.zones[2]}"
+    Name = "Private Subnet-${var.zones[2]}"
+    Infra             = "${var.domain}"
+    Environment       = "${var.environment}"
+    Terraformed       = "true"
+    KubernetesCluster = "${var.environment}.${var.domain}"
   }
 }
 
@@ -73,6 +106,10 @@ resource "aws_internet_gateway" "gw" {
 
   tags {
     Name = "VPC-IGW-URBN8"
+    Infra             = "${var.domain}"
+    Environment       = "${var.environment}"
+    Terraformed       = "true"
+    KubernetesCluster = "${var.environment}.${var.domain}"
   }
 }
 
@@ -95,6 +132,10 @@ resource "aws_route_table" "web-public-rt" {
 
   tags {
     Name = "Public-Subnet-RT"
+    Infra             = "${var.domain}"
+    Environment       = "${var.environment}"
+    Terraformed       = "true"
+    KubernetesCluster = "${var.environment}.${var.domain}"
   }
 }
 
@@ -112,98 +153,15 @@ resource "aws_route_table_association" "web-public-rt-subnet-c" {
   route_table_id = "${aws_route_table.web-public-rt.id}"
 }
 
-# Define the security group for public subnet
-resource "aws_security_group" "sgweb" {
-  name = "vpc_test_web"
-  description = "Allow incoming HTTP connections & SSH access"
-
-  ingress {
-    from_port = 80
-    to_port = 80
-    protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port = 443
-    to_port = 443
-    protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port = -1
-    to_port = -1
-    protocol = "icmp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
-    cidr_blocks =  ["112.197.14.10/32"]
-  }
-
-  vpc_id="${aws_vpc.default.id}"
-
-  tags {
-    Name = "Web Server SG"
-  }
-}
-
-# Define the security group for private subnet
-resource "aws_security_group" "sgdb"{
-  name = "sg_test_web"
-  description = "Allow traffic from public subnet"
-
-  ingress {
-    from_port = 3306
-    to_port = 3306
-    protocol = "tcp"
-    cidr_blocks = "${var.vpc_public_subnets}"
-  }
-
-  ingress {
-    from_port = -1
-    to_port = -1
-    protocol = "icmp"
-    cidr_blocks = "${var.vpc_public_subnets}"
-  }
-
-  ingress {
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
-    cidr_blocks = "${var.vpc_public_subnets}"
-  }
-  ingress {
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
-    cidr_blocks =  ["112.197.14.10/32"]
-  }
-  vpc_id = "${aws_vpc.default.id}"
-
-  tags {
-    Name = "DB SG"
-  }
-}
-
-resource "aws_db_subnet_group" "default" {
-    name = "db-subnet-group"
-    description = "RDS Subnet Group"
-    subnet_ids = ["${aws_subnet.private-subnet-a.id}", "${aws_subnet.private-subnet-b.id}", "${aws_subnet.private-subnet-c.id}"]
-    tags {
-      Name = "DB Subnet Group"
-    }
-}
-
 
 #Create Virtual Private Gateway
 resource "aws_vpn_gateway" "vpn_gateway" {
   tags {
     Name = "EU-VPN-GW"
+    Infra             = "${var.domain}"
+    Environment       = "${var.environment}"
+    Terraformed       = "true"
+    KubernetesCluster = "${var.environment}.${var.domain}"
   }
 }
 
@@ -215,11 +173,15 @@ resource "aws_vpn_gateway_attachment" "vpn_attachment" {
 
 resource "aws_customer_gateway" "customer_gateway" {
   bgp_asn    = 65000
-  ip_address = "103.99.244.46"
+  ip_address = "${var.customer_gateway}"
   type       = "ipsec.1"
 
   tags {
     Name = "VN_VNPT"
+    Infra             = "${var.domain}"
+    Environment       = "${var.environment}"
+    Terraformed       = "true"
+    KubernetesCluster = "${var.environment}.${var.domain}"
   }
 }
 
@@ -230,5 +192,10 @@ resource "aws_vpn_connection" "main" {
   static_routes_only  = true
   tags {
     Name = "VNOFFICE"
+    Infra             = "${var.domain}"
+    Environment       = "${var.environment}"
+    Terraformed       = "true"
+    KubernetesCluster = "${var.environment}.${var.domain}"
   }
 }
+

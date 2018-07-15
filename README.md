@@ -34,3 +34,14 @@ terraform plan
 terraform apply
 
 ```
+
+
+### Refer
+
+[Deploy Kubernetes in an Existing AWS VPC with Kops and Terraform](https://ryaneschinger.com/blog/kubernetes-aws-vpc-kops-terraform/)
+
+### Provider plugins
+
+- Aws is: 1.26.0
+- Random is: 1.3.1
+- Template: 1.0.0
