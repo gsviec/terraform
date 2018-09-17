@@ -10,14 +10,15 @@ module "mongodb" {
   source                 = "../../modules/mongodb"
   environment            = "staging"
   domain                 = "urbn8.io"
-  vpc_id                 = "vpc-23124148"
+  vpc_id                 = "vpc-efc99484"
   dns_zone               = "ZTSLDH58UVUDZ"
-  mongo_security_group   = ["sg-8d9c46e1", "sg-6192480d"]
-  ssh_security_group     = ["sg-6192480d"]
-  bastion_security_group = "sg-8d9c46e1"
-  key_name               = "frankfurt"
-  private_subnets        = ["subnet-58494f33", "subnet-5166251c", "subnet-afbec3d2"]
-  vol_size               = "10"
+  ami_id                 = "ami-0adbe2a35a4b9fb93"
+  vpc_security_group_ids = ["sg-a77cd1cb", "sg-014ce16d", "sg-3871dc54", "sg-05ec5a4c8be661b91"]
+
+  instance_type = "c4.large"
+  key_name      = "frankfurt"
+  subnet_ids    = ["subnet-c35f5fa8", "subnet-aea5dad3", "subnet-77115c3a"]
+  vol_size      = "10"
 }
 
 module "slack" {
